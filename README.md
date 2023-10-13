@@ -1,70 +1,47 @@
-# Getting Started with Create React App
+Objective: The code aims to calculate rarity scores for various trait types in a JSON dataset, with the rarity scores ranging from 0 to 1. Higher values for certain traits result in lower rarity scores.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Input: The input is a JSON dataset (loaded from the file data.json) containing tokens with different trait types and values. Trait types include "Eyes," "Mouth," "vigor," "wages," "resilience," "character," "background," and their variations.
 
-## Available Scripts
+Output: The output is a modified JSON dataset (saved as data_with_rarity.json) with added trait types and rarity scores for each token. The rarity scores are scaled between 0 and 1.
 
-In the project directory, you can run:
+Procedure:
 
-### `npm start`
+Load the JSON data from data.json and create a copy to store the updated data.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Define a mapping for trait type conversions to ensure uniform processing.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Iterate through each token in the dataset.
 
-### `npm test`
+For each token, calculate rarity scores for specific trait types:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+For "vigor," "resilience," and "wages," rarity is based on their values. A higher value corresponds to a lower rarity score, scaled between 0 and 1.
+For other trait types, rarity is calculated based on the frequency of occurrence in the dataset.
+Update the dataset with trait types and their corresponding rarity scores.
 
-### `npm run build`
+Save the updated JSON dataset to a new file (data_with_rarity.json).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Extraction of Color and Numeric Values:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Trait Types Extraction:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The code starts by iterating through each token in the dataset. It extracts the "trait_type" and "value" for each attribute in the token.
+Numeric Values Extraction:
 
-### `npm run eject`
+To extract numeric values from the trait types, the code checks if the current trait type belongs to the following categories:
+"Eyes" and its variations: If the trait type contains "Eyes," it splits the string by "-" and extracts the last part, which is assumed to be numeric.
+"features" and its variations: If the trait type contains "features," it splits the string by "-" and extracts the last part, which is assumed to be numeric.
+"vigor," "wages," and "resilience": For these traits, numeric values are already in numeric format and are directly used.
+Color Extraction:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Color information is not explicitly extracted in the code, but it can be assumed based on the remaining part of the trait type (excluding the numeric value). For example:
+"Eyes" and its variations are assumed to contain color information.
+"features" and its variations are assumed to contain color information.
+Trait Frequency Calculation:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+After extracting numeric values and determining the remaining part of the trait type as color, the code calculates the frequency of each combination of trait type and numeric value. The frequency counters, such as trait_frequencies, are used to store these counts.
+Rarity Calculation for Numeric Values:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+For trait types such as "Eyes" and "features," the rarity score is calculated based on the frequency of each numeric value. The rarity score is scaled from 0 to 1, where higher rarity corresponds to lower frequency.
+Trait Type Conversion:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The code also performs trait type conversion to ensure uniform processing. For example, "Eyes" and "eyes" are converted to "eyes," while "Mouth" and "features" are converted to "features."
