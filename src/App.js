@@ -7,7 +7,7 @@ function App() {
 
   const fetchData = () => {
     // Fetch JSON data using a relative path
-    fetch('/data.json')
+    fetch('./data.json')
       .then(response => response.json())
       .then(jsonData => {
         if (jsonData[tokenId] && jsonData[tokenId].data) {
