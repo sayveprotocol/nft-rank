@@ -2,7 +2,7 @@ import json
 from collections import Counter
 
 # Read the JSON data from the file
-with open('./src/data.json', 'r') as data_file:
+with open('data.json', 'r') as data_file:
     data = json.load(data_file)
 
 # Create dictionaries to store the frequency of numeric values and other traits
@@ -33,12 +33,15 @@ for id in data.keys():
             if converted_trait_type in ["eyes", "features", "character", "background"]:
                 trait_frequencies[converted_trait_type][value] += 1
 
-# Second loop to calculate rarity
+# Second loop to calculate rarity and total rarity per ID
 for id in data.keys():
     data_id = data[id]["data"]["extension"]["attributes"]
 
     # Create a dictionary to store the rarity scores for this token
     rarity_scores = {}
+
+    # Initialize a list to store individual rarity scores per ID
+    individual_rarities = []
 
     # Calculate rarity for each trait type
     for attr in data_id:
@@ -51,8 +54,11 @@ for id in data.keys():
         if converted_trait_type in ["eyes", "features", "character", "background"]:
             rarity_score = 0  # Default to 0 for division by zero
             if value in trait_frequencies[converted_trait_type]:
-                rarity_score = (1 / trait_frequencies[converted_trait_type][value]) * 100
+                total_count = sum(trait_frequencies[converted_trait_type].values())
+                rarity_score = (trait_frequencies[converted_trait_type][value] / total_count)
+
             rarity_scores[converted_trait_type.lower() + "_rarity"] = rarity_score
+            individual_rarities.append(rarity_score)
         if converted_trait_type in ["vigor", "resilience", "wages"]:
             # Calculate rarity for traits based on their values
             rarity_score = 0  # Default to 0 for traits without frequency counts
@@ -60,10 +66,21 @@ for id in data.keys():
                 rarity_score = 1 - (float(value) / 20.0)  # Scale rarity between 0 and 1, with higher values resulting in lower rarity
 
             rarity_scores[converted_trait_type.lower() + "_rarity"] = rarity_score
+            individual_rarities.append(rarity_score)
 
+    # Calculate the total rarity as an average of all individual rarities
+    if individual_rarities:
+        total_rarity = sum(individual_rarities) / len(individual_rarities)
+    else:
+        total_rarity = 0
+
+    # Add the total rarity to the rarity_scores dictionary
+    rarity_scores["total_rarity"] = total_rarity
 
     # Update the updated_data dictionary with trait types and rarity scores
+    data_id.append({"trait_type": "total_rarity", "value": total_rarity})
     updated_data[id]["data"]["extension"]["attributes"] = data_id + [{"trait_type": key.lower() + "_rarity", "value": value} for key, value in rarity_scores.items()]
+
 
 # Save the JSON data with the new trait data to a new file
 with open('data_with_rarity.json', 'w') as output_file:
