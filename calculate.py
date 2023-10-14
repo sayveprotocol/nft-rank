@@ -43,6 +43,12 @@ for id in data.keys():
     # Initialize a list to store individual rarity scores per ID
     individual_rarities = []
 
+    # Initialize variables to calculate pfp_rarity and game_rarity
+    pfp_rarity_sum = 0
+    pfp_rarity_count = 0
+    game_rarity_sum = 0
+    game_rarity_count = 0
+
     # Calculate rarity for each trait type
     for attr in data_id:
         trait_type = attr["trait_type"]
@@ -59,6 +65,9 @@ for id in data.keys():
 
             rarity_scores[converted_trait_type.lower() + "_rarity"] = rarity_score
             individual_rarities.append(rarity_score)
+            if converted_trait_type in ["eyes", "features", "character", "background"]:
+                pfp_rarity_sum += rarity_score
+                pfp_rarity_count += 1
         if converted_trait_type in ["vigor", "resilience", "wages"]:
             # Calculate rarity for traits based on their values
             rarity_score = 0  # Default to 0 for traits without frequency counts
@@ -67,6 +76,9 @@ for id in data.keys():
 
             rarity_scores[converted_trait_type.lower() + "_rarity"] = rarity_score
             individual_rarities.append(rarity_score)
+            if converted_trait_type in ["vigor", "resilience", "wages"]:
+                game_rarity_sum += rarity_score
+                game_rarity_count += 1
 
     # Calculate the total rarity as an average of all individual rarities
     if individual_rarities:
@@ -77,8 +89,28 @@ for id in data.keys():
     # Add the total rarity to the rarity_scores dictionary
     rarity_scores["total_rarity"] = total_rarity
 
+    # Calculate pfp_rarity as an average of "eyes," "features," "character," and "background" rarities
+    if pfp_rarity_count:
+        pfp_rarity = pfp_rarity_sum / pfp_rarity_count
+    else:
+        pfp_rarity = 0
+
+    # Add the pfp_rarity to the rarity_scores dictionary
+    rarity_scores["pfp_rarity"] = pfp_rarity
+
+    # Calculate game_rarity as an average of "vigor," "resilience," and "wages" rarities
+    if game_rarity_count:
+        game_rarity = game_rarity_sum / game_rarity_count
+    else:
+        game_rarity = 0
+
+    # Add the game_rarity to the rarity_scores dictionary
+    rarity_scores["game_rarity"] = game_rarity
+
     # Update the updated_data dictionary with trait types and rarity scores
     data_id.append({"trait_type": "total_rarity", "value": total_rarity})
+    data_id.append({"trait_type": "pfp_rarity", "value": pfp_rarity})
+    data_id.append({"trait_type": "game_rarity", "value": game_rarity})
     updated_data[id]["data"]["extension"]["attributes"] = data_id + [{"trait_type": key.lower() + "_rarity", "value": value} for key, value in rarity_scores.items()]
 
 
